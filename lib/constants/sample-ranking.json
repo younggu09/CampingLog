@@ -1,0 +1,22 @@
+[
+  {
+    "nickName": "산타클로스",
+    "memberGrade": "BLACK"
+  },
+  {
+    "nickName": "캠핑마스터",
+    "memberGrade": "RED"
+  },
+  {
+    "nickName": "텐트장인",
+    "memberGrade": "RED"
+  },
+  {
+    "nickName": "자연사랑",
+    "memberGrade": "BLUE"
+  },
+  {
+    "nickName": "캠핑초보",
+    "memberGrade": "GREEN"
+  }
+]

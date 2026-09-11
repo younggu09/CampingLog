@@ -1,0 +1,184 @@
+
+# 각 요청 위의 'Send Request'를 클릭하여 API를 테스트할 수 있습니다.
+
+@baseUrl = http://localhost:8080
+@jwt_token = <로그인 후 받은 토큰을 여기에 붙여넣으세요>
+@boardId = <테스트할 게시글 ID를 여기에 입력하세요>
+@commentId = <테스트할 댓글 ID를 여기에 입력하세요>
+
+
+#################################################################
+# 회원 (Members) API
+#################################################################
+
+### (POST) 회원 가입
+# @name addMember
+POST {{baseUrl}}/api/members
+Content-Type: application/json
+
+{
+  "email": "testuser@example.com",
+  "password": "Password123!",
+  "name": "홍길동",
+  "nickname": "길동이",
+  "birthday": "1995-08-15",
+  "phoneNumber": "010-1234-5678"
+}
+
+### ---------------------------------
+
+### (POST) 로그인
+# @name login
+# 이 요청을 성공적으로 보내면 응답 헤더의 Authorization 토큰이
+# 자동으로 @jwt_token 변수에 저장됩니다.
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+  "email": "testuser@example.com",
+  "password": "Password123!"
+}
+
+> {%
+    client.global.set("jwt_token", response.headers.valueOf("Authorization").replace("Bearer ", ""));
+%}
+
+### ---------------------------------
+
+### (GET) 인증 테스트
+# @name authTest
+# 로그인 후 받은 토큰으로 인증이 필요한 API를 테스트합니다.
+GET {{baseUrl}}/api/members/test
+Authorization: Bearer {{jwt_token}}
+
+
+#################################################################
+# 게시판 (Boards) API
+#################################################################
+
+### (POST) 게시글 등록
+# @name addBoard
+POST {{baseUrl}}/api/boards
+Content-Type: application/json
+Authorization: Bearer {{jwt_token}}
+
+{
+    "title" : "테스트",
+    "content" : "테스트입니다",
+    "categoryName" : "게시글",
+    "boardImage" :""
+}
+
+### ---------------------------------
+
+### (PUT) 게시글 수정
+# @name setBoard
+PUT {{baseUrl}}/api/boards/{{boardId}}
+Content-Type: application/json
+Authorization: Bearer {{jwt_token}}
+
+{
+    "title" : "수정된 제목",
+    "content" : "수정된 내용입니다",
+    "categoryName" : "게시글",
+    "boardImage" :""
+}
+
+### ---------------------------------
+
+### (DELETE) 게시글 삭제
+# @name deleteBoard
+DELETE {{baseUrl}}/api/boards/{{boardId}}
+Authorization: Bearer {{jwt_token}}
+
+### ---------------------------------
+
+### (GET) 게시글 랭킹 조회
+# @name getBoardRank
+GET {{baseUrl}}/api/boards/rank
+
+### ---------------------------------
+
+### (GET) 게시글 키워드 검색
+# @name searchBoards
+GET {{baseUrl}}/api/boards/search?keyword=테스&page=1&size=10
+
+### ---------------------------------
+
+### (GET) 게시글 상세 조회
+# @name getBoardDetail
+GET {{baseUrl}}/api/boards/{{boardId}}
+
+### ---------------------------------
+
+### (GET) 카테고리별 게시글 조회
+# @name getBoardByCategory
+GET {{baseUrl}}/api/boards/category?category=게시글&page=1&size=7
+
+
+#################################################################
+# 댓글 (Comments) API
+#################################################################
+
+### (POST) 댓글 등록
+# @name addComment
+POST {{baseUrl}}/api/boards/{{boardId}}/comment
+Content-Type: application/json
+Authorization: Bearer {{jwt_token}}
+
+{
+    "content" : "안녕하세요! 첫 댓글입니다."
+}
+
+### ---------------------------------
+
+### (GET) 댓글 목록 조회
+# @name getComments
+GET {{baseUrl}}/api/boards/{{boardId}}/comments
+
+### ---------------------------------
+
+### (PUT) 댓글 수정
+# @name setComment
+PUT {{baseUrl}}/api/boards/{{boardId}}/comments/{{commentId}}
+Content-Type: application/json
+Authorization: Bearer {{jwt_token}}
+
+{
+    "content": "댓글 내용 수정!"
+}
+
+### ---------------------------------
+
+### (DELETE) 댓글 삭제
+# @name deleteComment
+DELETE {{baseUrl}}/api/boards/{{boardId}}/comments/{{commentId}}
+Authorization: Bearer {{jwt_token}}
+
+
+#################################################################
+# 좋아요 (Likes) API
+#################################################################
+
+### (POST) 좋아요 추가
+# @name addLike
+POST {{baseUrl}}/api/boards/{{boardId}}/likes
+Content-Type: application/json
+Authorization: Bearer {{jwt_token}}
+
+{
+    "email" : "testuser@example.com"
+}
+
+### ---------------------------------
+
+### (GET) 좋아요 조회
+# @name getLikes
+GET {{baseUrl}}/api/boards/{{boardId}}/likes
+
+### ---------------------------------
+
+### (DELETE) 좋아요 취소
+# @name deleteLike
+DELETE {{baseUrl}}/api/boards/{{boardId}}/likes
+Authorization: Bearer {{jwt_token}}
